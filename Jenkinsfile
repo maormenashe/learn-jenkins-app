@@ -1,14 +1,12 @@
 pipeline {
-    agent any
-
+    agent {
+        docker {
+            image 'node:18-alpine'
+            reuseNode true
+        }
+    }
     stages {
         stage('build') {
-            agent{
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
             steps {
                 sh '''
                     ls -la
@@ -22,16 +20,16 @@ pipeline {
         }
         stage('Test') {
             steps {
-                    echo 'Test stage'
-                    sh '''
-                            if [ -f build/index.html ]; then
-                                echo "index.html exists in build directory."
-                            else
-                                echo "index.html does NOT exist in build directory!" >&2
-                                exit 1
-                            fi
-                    '''
-                    sh 'npm test'
+                echo 'Test stage'
+                sh '''
+                    if [ -f build/index.html ]; then
+                        echo "index.html exists in build directory."
+                    else
+                        echo "index.html does NOT exist in build directory!" >&2
+                        exit 1
+                    fi
+                '''
+                sh 'npm test'
             }
         }
     }
