@@ -69,7 +69,7 @@ pipeline {
             allowMissing: false,
             alwaysLinkToLastBuild: false,
             icon: '',
-            keepAll: false,
+            keepAll: true,
             reportDir: 'playwright-report',
             reportFiles: 'index.html',
             reportName: 'Playwright HTML Report',
