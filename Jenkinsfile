@@ -102,13 +102,14 @@ pipeline {
                 }
             }
             steps {
+                echo "Deploying to production site ID: ${env.NETLIFY_CI_ID}"
+
                 sh '''
                     #npm install netlify-cli --save-dev
                     npm install netlify-cli@20.1.1
 
                     npx netlify --version
 
-                    echo "Deploying to production site ID: ${env.NETLIFY_CI_ID}"
                     #npx netlify deploy --prod --dir=build
                 '''
             }
