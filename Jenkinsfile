@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         NETLIFY_CI_ID = '2761abfd-9b19-4158-88a0-da37ea5ab893'
+        NETLIFY_AUTH_TOKEN = credentials('netlify-token')
     }
 
     stages {
@@ -109,6 +110,7 @@ pipeline {
                     npm install netlify-cli@20.1.1
 
                     npx netlify --version
+                    npx netlify status
 
                     #npx netlify deploy --prod --dir=build
                 '''
