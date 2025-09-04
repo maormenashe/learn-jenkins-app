@@ -99,11 +99,12 @@ pipeline {
             }
             steps {
                 sh '''
-                    npm install netlify-cli --save-dev
+                    #npm install netlify-cli --save-dev
+                    npm install netlify-cli@20.1.1
 
                     npx netlify --version
 
-                    npx netlify deploy --prod --dir=build
+                    #npx netlify deploy --prod --dir=build
                 '''
             }
         }
