@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        NETLIFY_CI_ID = '2761abfd-9b19-4158-88a0-da37ea5ab893'
+    }
+
     stages {
         stage('build') {
             agent {
@@ -104,6 +108,7 @@ pipeline {
 
                     npx netlify --version
 
+                    echo "Deploying to production site ID: ${env.NETLIFY_CI_ID}"
                     #npx netlify deploy --prod --dir=build
                 '''
             }
