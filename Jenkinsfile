@@ -96,17 +96,20 @@ pipeline {
             }
         }
 
-
-        stage('Deploy Staging') {
+        stage('Staging Deploy/E2E') {
             agent {
                 docker {
-                    image 'node:18-alpine'
+                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
                     reuseNode true
                 }
             }
-            steps {
-                echo "Deploying to staging site ID: ${env.NETLIFY_SITE_ID}"
 
+            environment {
+                CI_ENVIRONMENT_URL = "PLACE_HOLDER"
+            }
+
+            steps {
+                echo 'Staging E2E stage'
                 sh '''
                     #npm install netlify-cli --save-dev
                     npm install netlify-cli@20.1.1 node-jq
@@ -115,36 +118,8 @@ pipeline {
                     npx netlify status
 
                     npx netlify deploy --dir=build --json > stage-deploy-output.json
-                '''
+                    CI_ENVIRONMENT_URL=$(npx node-jq -r '.deploy_url' stage-deploy-output.json)
 
-                script() {
-                    def deployUrl = sh(script: "npx node-jq -r '.deploy_url' stage-deploy-output.json", returnStdout: true).trim()
-                    echo "Deploy URL: ${deployUrl}"
-                    env.STAGING_URL = deployUrl
-                }
-            }
-        }
-
-
-        stage('Staging E2E') {
-            agent {
-                docker {
-                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
-                    reuseNode true
-                }
-            }
-
-
-            environment {
-                CI_ENVIRONMENT_URL = "${env.STAGING_URL}"
-            }
-
-            steps {
-                echo 'Staging E2E stage'
-                sh '''
-                    npm install serve
-                    npx serve -s build &
-                    sleep 10
                     npx playwright test --reporter=html
                 '''
             }
@@ -183,7 +158,6 @@ pipeline {
                     reuseNode true
                 }
             }
-
 
             environment {
                 CI_ENVIRONMENT_URL = 'https://ma-ata-omer.netlify.app'
