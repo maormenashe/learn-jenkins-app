@@ -114,7 +114,7 @@ pipeline {
                     npx netlify --version
                     npx netlify status
 
-                    npx netlify deploy --dir=build
+                    npx netlify deploy --dir=build --json
                 '''
             }
         }
