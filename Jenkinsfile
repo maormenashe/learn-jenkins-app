@@ -109,12 +109,13 @@ pipeline {
 
                 sh '''
                     #npm install netlify-cli --save-dev
-                    npm install netlify-cli@20.1.1
+                    npm install netlify-cli@20.1.1 node-jq
 
                     npx netlify --version
                     npx netlify status
 
                     npx netlify deploy --dir=build --json > stage-deploy-output.json
+                    npx node-jq -r '.deploy_url' stage-deploy-output.json
                 '''
             }
         }
