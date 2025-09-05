@@ -116,12 +116,12 @@ pipeline {
 
                     npx netlify deploy --dir=build --json > stage-deploy-output.json
                 '''
-            }
 
-            script() {
-                def deployUrl = sh(script: "npx node-jq -r '.deploy_url' stage-deploy-output.json", returnStdout: true).trim()
-                echo "Deploy URL: ${deployUrl}"
-                env.STAGING_URL = deployUrl
+                script() {
+                    def deployUrl = sh(script: "npx node-jq -r '.deploy_url' stage-deploy-output.json", returnStdout: true).trim()
+                    echo "Deploy URL: ${deployUrl}"
+                    env.STAGING_URL = deployUrl
+                }
             }
         }
 
