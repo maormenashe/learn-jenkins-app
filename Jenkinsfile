@@ -176,32 +176,7 @@ pipeline {
         }
 
 
-        stage('Deploy Production') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
-            steps {
-                echo "Deploying to production site ID: ${env.NETLIFY_SITE_ID}"
-
-                sh '''
-                    #npm install netlify-cli --save-dev
-                    npm install netlify-cli@20.1.1
-
-                    npx netlify --version
-                    npx netlify status
-
-                    npx netlify deploy \
-                        --prod \
-                        --dir=build
-                '''
-            }
-        }
-
-
-        stage('Prod E2E') {
+        stage('Prod Deploy/E2E') {
             agent {
                 docker {
                     image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
@@ -215,11 +190,19 @@ pipeline {
             }
 
             steps {
-                echo 'Prod E2E stage'
                 sh '''
-                    npm install serve
-                    npx serve -s build &
-                    sleep 10
+                    node --version
+                    #npm install netlify-cli --save-dev
+                    npm install netlify-cli@20.1.1
+
+                    npx netlify --version
+                    npx netlify status
+
+                    npx netlify deploy \
+                        --prod \
+                        --dir=build
+
+                    sleep 5
                     npx playwright test --reporter=html
                 '''
             }
