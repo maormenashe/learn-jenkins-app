@@ -85,7 +85,7 @@ pipeline {
                             keepAll: false,
                             reportDir: 'playwright-report',
                             reportFiles: 'index.html',
-                            reportName: 'Playwright HTML Report',
+                            reportName: 'Playwright Local HTML Report',
                             reportTitles: '',
                             useWrapperFileDirectly: true
                             ])
@@ -118,6 +118,47 @@ pipeline {
                         --prod \
                         --dir=build
                 '''
+            }
+        }
+
+
+        stage('Prod E2E') {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                    reuseNode true
+                }
+            }
+
+
+            environment {
+                CI_ENVIRONMENT_URL = 'https://ma-ata-omer.netlify.app'
+            }
+
+            steps {
+                echo 'Prod E2E stage'
+                sh '''
+                    npm install serve
+                    npx serve -s build &
+                    sleep 10
+                    npx playwright test --reporter=html
+                '''
+            }
+
+            post {
+                always {
+                    publishHTML([
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: false,
+                    icon: '',
+                    keepAll: false,
+                    reportDir: 'playwright-report',
+                    reportFiles: 'index.html',
+                    reportName: 'Playwright Prod HTML Report',
+                    reportTitles: '',
+                    useWrapperFileDirectly: true
+                    ])
+                }
             }
         }
 
